@@ -3,3 +3,5 @@ qgmap/__pycache__/
 venv/
 __pycache__/
 .vscode/
+qMap/__pycache__/
+qMap/qgmap/__pycache__/
