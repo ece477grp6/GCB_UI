@@ -4,8 +4,9 @@ from PyQt5.QtCore import *
 from qgmap.config import config
 from mainwindow import Ui_MainWindow
 from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from PyQt5.QtWebKit import QWebSettings
+from PyQt5.QtWebEngine import QWebEngineSettings
 from PyQt5.QtWebKitWidgets import QWebPage, QWebView
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
@@ -13,6 +14,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.show()
+
 
 if __name__ == '__main__':
 
