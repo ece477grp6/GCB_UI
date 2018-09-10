@@ -12,7 +12,7 @@ backend = config['backend']
 if backend == "PyQt5":
     from PyQt5.QtCore import pyqtSignal, QUrl, QUrlQuery, QXmlStreamReader
     from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-    from PyQt5.QtWebKit import QWebSettings
+#    from PyQt5.QtWebKit import QWebSettings
     from PyQt5.QtWebKitWidgets import QWebPage, QWebView
     from PyQt5.QtWidgets import QApplication
 

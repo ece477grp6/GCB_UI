@@ -1,9 +1,11 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import qMap.qgmap # Retrived from https://github.com/eyllanesc/qMap
 from mainwindow import Ui_MainWindow
-from qMap.qgmap.common import QGoogleMap
+import sys
+sys.path.insert(0, "./qMap/")
+import qgmap # Retrived from https://github.com/eyllanesc/qMap
+from qgmap.common import QGoogleMap
 
 qgmap.use("PyQt5")
 
