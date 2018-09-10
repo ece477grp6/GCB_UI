@@ -1,3 +1,4 @@
 .direnv/
-qgmap/_init_.py
+qgmap/__pycache__/
 venv/
+__pycache__
