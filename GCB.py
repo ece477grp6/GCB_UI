@@ -1,11 +1,11 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from qgmap.config import config
+from qgmap # Retrived from https://github.com/eyllanesc/qMap
 from mainwindow import Ui_MainWindow
-from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
-from PyQt5.QtWebKit import QWebSettings
-from PyQt5.QtWebKitWidgets import QWebPage, QWebView
+from qgmap.common import QGoogleMap
+
+qgmap.use("PyQt5")
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
