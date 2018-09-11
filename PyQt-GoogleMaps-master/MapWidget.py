@@ -43,7 +43,7 @@ class MapWidget(QWebView):
         geocoder = new google.maps.Geocoder();
 
         var mapOptions = {
-            zoom: 15,
+            zoom: 16,
             minZoom: 3,
             center: {lat: 40.450, lng: -86.870},
             }
@@ -198,6 +198,14 @@ class MapWidget(QWebView):
           markers = [];
           return "True";
         }
+
+
+
+
+
+
+
+
 
         google.maps.event.addDomListener(window, 'load', initialize);
 
