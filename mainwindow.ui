@@ -27,22 +27,13 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="5,4">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,3">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="3">
         <property name="spacing">
          <number>10</number>
         </property>
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
-        <item>
-         <widget class="QWebView" name="webView_map">
-          <property name="url">
-           <url>
-            <string>about:blank</string>
-           </url>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="sizePolicy">
@@ -52,7 +43,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab1">
            <property name="contextMenuPolicy">
@@ -150,7 +141,7 @@
          <widget class="QGraphicsView" name="graphicsView_camera"/>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,0,5">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="8,1,10">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -434,13 +425,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebView</class>
-   <extends>QWidget</extends>
-   <header>QtWebKitWidgets/QWebView</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
