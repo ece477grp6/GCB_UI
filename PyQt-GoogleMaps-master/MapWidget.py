@@ -100,12 +100,12 @@ class MapWidget(QWebView):
 
                     for( var i = 0; i < results.length; i++){
 
-                         address = results[5].formatted_address;
+                         address = results[i].formatted_address;
 
                     }
 
-                    console.log(results[5].formatted_address);
-                     highestLevel = results.slice(-1)[0];
+                    console.log(results[0].formatted_address);
+                    highestLevel = results.slice(-1)[0];
 
                     }
 
@@ -136,12 +136,14 @@ class MapWidget(QWebView):
         var lng = marker.getPosition().lng();
 
         var actualAddress = codeLatLng(lat,lng);
+        // window.alert(actualAddress);
         markers.push({"Address":actualAddress,"Object":marker,"Lat":lat,"Lng":lng});
+        // window.alert([lat, lng])
+        // window.alert(markers);
 
-
-                    google.maps.event.addListener(marker, 'rightclick', function(event) {
-                        marker.setMap(null);
-                    });
+        google.maps.event.addListener(marker, 'rightclick', function(event) {
+            marker.setMap(null);
+        });
 
 
         google.maps.event.addListener(marker, 'click', function(event) {
@@ -173,7 +175,8 @@ class MapWidget(QWebView):
         }
 
          function GetMarkers(){
-           return markers;
+           return(markers.map(function(markers){return [markers['Lat'],markers['Lng']];}))
+
         }
 
         // Sets the map on all markers in the array.
@@ -198,13 +201,6 @@ class MapWidget(QWebView):
           markers = [];
           return "True";
         }
-
-
-
-
-
-
-
 
 
         google.maps.event.addDomListener(window, 'load', initialize);

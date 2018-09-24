@@ -186,7 +186,8 @@ class MainWindow(QMainWindow):
         return html
 
     def _callback(self, result):
-        print(result);
+        print(result)
+        # self.markers = result;
 
     def getMapMarkers(self):
 
