@@ -1,7 +1,6 @@
 .direnv/
-qgmap/__pycache__/
+map/__pycache__/
 venv/
 __pycache__/
 .vscode/
-qMap/__pycache__/
-qMap/qgmap/__pycache__/
+PyQt-GoogleMaps-master/
