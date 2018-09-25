@@ -50,8 +50,7 @@ function addMarker(event) {
 }
 
 function addMarkerLatlng(latVal, lngVal) {
-  var latlng = new google.maps.LatLng({lat: latVal, lng: lngVal});
-  // alert(event.latLng);
+  var latlng = new google.maps.LatLng({lat: latVal, lng: lngVal}); 
   var path = poly.getPath();
   path.push(latlng);
   var marker = new google.maps.Marker({
