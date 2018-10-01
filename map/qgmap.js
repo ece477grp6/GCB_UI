@@ -37,11 +37,10 @@ function addMarker(event) {
   var markerNum = currMarker + 1;
   currMarker = currMarker + 1;
   google.maps.event.addListener(marker, 'rightclick', function(event) {
-    if(markerNum == currMarker){
-      rmMarker(marker);
+    for( currMarker; markerNum <= currMarker; currMarker--){
+      rmMarker(markers[currMarker-1]);
       markers.pop();
       path.pop();
-      currMarker = currMarker -1;
     }
   });
   var lat = marker.getPosition().lat();

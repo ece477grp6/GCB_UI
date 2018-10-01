@@ -1,22 +1,23 @@
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 from mainwindow import *
-from urllib import request
-import http.client as httplib
+import os
+import socket
+from TCP import *
 
 if __name__ == '__main__':
-
-	# conn = httplib.HTTPConnection("128.46.96.229:90")
-	# conn.request("GET", "/123")
-	# r1 = conn.getresponse()
-	# data1 = r1.read()
-	# print(data1)
-	
-	# response = request.urlopen('http://128.46.96.229:90')
-	# html = response.read()
-	# print(html)
+	# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	# s.connect(("128.46.96.229", 5050))
+	# sent = s.sendall('4654653'.encode())
+	# if sent == 0:
+	# 	raise RuntimeError("socket connection broken")
+	# data = s.recv(1024)
+	# print(data)
+	if os.path.exists("GCB.log"):
+		os.remove("GCB.log")
+	logging.basicConfig(filename='GCB.log',level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S')
+	tcp = TCPThread()
+	tcp.start()
 	app = QApplication([])
 	window = MainWindow()
 	window.show()
 	app.exec_()
+
