@@ -3,6 +3,8 @@ var jshelper;
 var poly;
 var markers = [];
 var currMarker = 0;
+var currPos;
+var currPoly;
 
 new QWebChannel(qt.webChannelTransport, function (channel) {
     jshelper = channel.objects.jshelper;
@@ -22,6 +24,13 @@ function initMap() {
     strokeWeight: 3
   });
   poly.setMap(map);
+
+  currPoly = new google.maps.Polyline({
+    strokeColor: '#3C07F3',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+  });
+  currPoly.setMap(map);
 }
 
 function addMarker(event) {
@@ -86,4 +95,17 @@ function clearMarkers() {
   jshelper.clearAllMarkers();
 }
 
-
+function updateCurrentPos(latVal, lngVal) {
+  if (typeof currPos != 'undefined'){
+    currPos.setMap(null);
+  }
+  var latlng = new google.maps.LatLng({lat: latVal, lng: lngVal}); 
+  var currPath = currPoly.getPath();
+  currPath.push(latlng);
+  currPos = new google.maps.Marker({
+    position: latlng,
+    title: '#' + currPath.getLength(),
+    label: "GCB",
+    map: map
+  });
+}
