@@ -5,6 +5,7 @@ var markers = [];
 var currMarker = 0;
 var currPos;
 var currPoly;
+var locked = 0;
 
 new QWebChannel(qt.webChannelTransport, function (channel) {
     jshelper = channel.objects.jshelper;
@@ -33,66 +34,86 @@ function initMap() {
   currPoly.setMap(map);
 }
 
+function lock(){
+  locked = 1;
+}
+
+function unlock(){
+  locked = 0;
+}
+
+function setCenter(latVal, lngVal){
+  map.setCenter({lat: latVal, lng: lngVal});
+}
+
 function addMarker(event) {
-  var path = poly.getPath();
-  path.push(event.latLng);
-  // alert(event.latLng);
-  var marker = new google.maps.Marker({
-    position: event.latLng,
-    title: '#' + path.getLength(),
-    map: map
-  });
-  markers.push(marker);
-  var markerNum = currMarker + 1;
-  currMarker = currMarker + 1;
-  google.maps.event.addListener(marker, 'rightclick', function(event) {
-    for( currMarker; markerNum <= currMarker; currMarker--){
-      rmMarker(markers[currMarker-1]);
-      markers.pop();
-      path.pop();
-    }
-  });
-  var lat = marker.getPosition().lat();
-  var lng = marker.getPosition().lng();
-  jshelper.markerAdded(lat, lng);
+  if(!locked){
+    var path = poly.getPath();
+    path.push(event.latLng);
+    // alert(event.latLng);
+    var marker = new google.maps.Marker({
+      position: event.latLng,
+      title: '#' + path.getLength(),
+      map: map
+    });
+    markers.push(marker);
+    var markerNum = currMarker + 1;
+    currMarker = currMarker + 1;
+    google.maps.event.addListener(marker, 'rightclick', function(event) {
+      for( currMarker; markerNum <= currMarker; currMarker--){
+        rmMarker(markers[currMarker-1]);
+        markers.pop();
+        path.pop();
+      }
+    });
+    var lat = marker.getPosition().lat();
+    var lng = marker.getPosition().lng();
+    jshelper.markerAdded(lat, lng);
+  }
 }
 
 function addMarkerLatlng(latVal, lngVal) {
-  var latlng = new google.maps.LatLng({lat: latVal, lng: lngVal}); 
-  var path = poly.getPath();
-  path.push(latlng);
-  var marker = new google.maps.Marker({
-    position: latlng,
-    title: '#' + path.getLength(),
-    map: map
-  });
-  markers.push(marker);
-  var markerNum = currMarker + 1;
-  currMarker = currMarker + 1;
-  google.maps.event.addListener(marker, 'rightclick', function(event) {
-    if(markerNum == currMarker){
-      rmMarker(marker);
-      markers.pop();
-      path.pop();
-      currMarker = currMarker -1;
-    }
-  });
-  jshelper.markerAdded(latVal, lngVal);
+  if(!locked){
+    var latlng = new google.maps.LatLng({lat: latVal, lng: lngVal}); 
+    var path = poly.getPath();
+    path.push(latlng);
+    var marker = new google.maps.Marker({
+      position: latlng,
+      title: '#' + path.getLength(),
+      map: map
+    });
+    markers.push(marker);
+    var markerNum = currMarker + 1;
+    currMarker = currMarker + 1;
+    google.maps.event.addListener(marker, 'rightclick', function(event) {
+      if(markerNum == currMarker){
+        rmMarker(marker);
+        markers.pop();
+        path.pop();
+        currMarker = currMarker -1;
+      }
+    });
+    jshelper.markerAdded(latVal, lngVal);
+  }
 }
 
 function rmMarker(marker) {
-  marker.setMap(null);
-  var lat = marker.getPosition().lat();
-  var lng = marker.getPosition().lng();
-  jshelper.markerRemoved(lat, lng);
+  if(!locked){
+    marker.setMap(null);
+    var lat = marker.getPosition().lat();
+    var lng = marker.getPosition().lng();
+    jshelper.markerRemoved(lat, lng);
+  }
 }
 
 function clearMarkers() {
-  poly.getPath().clear();
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
+  if(!locked){
+    poly.getPath().clear();
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
+    jshelper.clearAllMarkers();
   }
-  jshelper.clearAllMarkers();
 }
 
 function updateCurrentPos(latVal, lngVal) {

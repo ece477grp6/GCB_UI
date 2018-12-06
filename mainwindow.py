@@ -31,6 +31,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_straight.pressed.connect(self.goStraight)
         self.pushButton_speedU.pressed.connect(self.goUp)
         self.pushButton_speedD.pressed.connect(self.goDown)
+        self.pushButton_start.pressed.connect(self.start)
+        self.pushButton_stop.pressed.connect(self.stop)
+        self.tabWidget.currentChanged.connect(self.onChange)
+        # self.pushButton_clearPath.pressed.connect(self)
         
         self.leftClicked = False
         self.rightClicked = False
@@ -39,12 +43,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tcp = TCPThread()
         self.tcp.start()
         self.tcp.msgGiven.connect(self.update_data)
-        # self.serial = SerialThread()
-        # self.serial.start(self.compass)
+        self.label_info.setText("Connecting Wi-Fi......")
+        self.map.markersChanged.connect(self.update_markers)
+
+    def update_markers(self):
+        self.tcp.markers = self.map.markers
+
+    def start(self):
+        self.tcp.mode = 1
+        self.tcp.curr_marker = 0
+        self.map.page().runJavaScript("lock()")
+
+    def stop(self):
+        self.tcp.mode = 0
+        self.map.page().runJavaScript("unlock()")
+
+    def onChange(self):
+        if self.tabWidget.currentIndex() == 1:
+            self.tcp.mode = 2
 
     def update_data(self):
-        self.map.page().runJavaScript("updateCurrentPos(%f, %f)" %(self.tcp.gps_x, self.tcp.gps_y));
+        if self.tcp.re_connect is True:
+            self.label_info.setText("Reconecting Wi-Fi......")
+            return
+        if self.tcp.gps_x <= 0.1 and self.tcp.gps_y <= 0.1:
+            self.label_info.setText("Waiting for GPS to connect......")
+            return
+        self.label_info.setText("")
+        self.map.page().runJavaScript("setCenter(%f, %f)" %(self.tcp.gps_x, self.tcp.gps_y))
+        self.map.page().runJavaScript("updateCurrentPos(%f, %f)" %(self.tcp.gps_x, self.tcp.gps_y))
         self.compass.angle = self.tcp.angle
+        self.label_heading_info.setText(str(self.tcp.angle))
+        self.label_coords_info.setText("%s,%s"%(self.tcp.gps_x, self.tcp.gps_y))
+        self.label_battery_info.setText("%d,%d,%d" %(self.tcp.battery1/4095*4.2, self.tcp.battery2/4095*4.2, self.tcp.battery3/4095*4.2))
+        if self.tcp.ct >= 2:
+            self.label_storage_info.setText("full")
+        else:
+            self.label_storage_info.setText("not full")
+        self.label_speed_info.setText(self.tcp.speed)
+        self.label_1left_motor_info.setText(str(self.tcp.lspeed))
+        self.label_right_motor_info.setText(str(self.tcp.rspeed))
+
 
     def setSpeed(self):
         val = self.tcp.speedl - 6
