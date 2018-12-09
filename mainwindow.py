@@ -4,6 +4,8 @@ from CompassWidget import *
 from TCP import *
 # from serialCompass import *
 import logging
+import subprocess
+import os
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -14,13 +16,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.map = MapWidget()
         self.map.setup(self.listWidget)
-        self.verticalLayout_map.insertWidget(0,self.map)
+        self.verticalLayout_map.insertWidget(0, self.map)
         self.verticalLayout_map.setStretch(0, 5)
         self.verticalLayout_map.setStretch(1, 3)
 
         self.compass = CompassWidget()
         self.compass.angle = 10
-        self.verticalLayout_compass.insertWidget(0,self.compass)
+        self.verticalLayout_compass.insertWidget(0, self.compass)
 
         self.pushButton_clearMarkers.pressed.connect(self.clearMarkers)
         self.pushButton_loadFile.pressed.connect(self.openFileNameDialog)
@@ -35,7 +37,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_stop.pressed.connect(self.stop)
         self.tabWidget.currentChanged.connect(self.onChange)
         # self.pushButton_clearPath.pressed.connect(self)
-        
+        self.pushButton_video.pressed.connect(self.startVideo)
+
         self.leftClicked = False
         self.rightClicked = False
         logging.info("MainWindow: Initialized MainWindow")
@@ -45,6 +48,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tcp.msgGiven.connect(self.update_data)
         self.label_info.setText("Connecting Wi-Fi......")
         self.map.markersChanged.connect(self.update_markers)
+
+    def startVideo(self):
+        print(os.environ.copy())
+        environment = os.environ.copy()
+        environment["PATH"] = "/usr/sbin:/sbin" + environment["PATH"]
+        subprocess.Popen([sys.executable, "videoStream.py"])
 
     def update_markers(self):
         self.tcp.markers = self.map.markers
@@ -70,12 +79,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.label_info.setText("Waiting for GPS to connect......")
             return
         self.label_info.setText("")
-        self.map.page().runJavaScript("setCenter(%f, %f)" %(self.tcp.gps_x, self.tcp.gps_y))
-        self.map.page().runJavaScript("updateCurrentPos(%f, %f)" %(self.tcp.gps_x, self.tcp.gps_y))
+        self.map.page().runJavaScript("setCenter(%f, %f)" %
+                                      (self.tcp.gps_x, self.tcp.gps_y))
+        self.map.page().runJavaScript("updateCurrentPos(%f, %f)" %
+                                      (self.tcp.gps_x, self.tcp.gps_y))
         self.compass.angle = self.tcp.angle
         self.label_heading_info.setText(str(self.tcp.angle))
-        self.label_coords_info.setText("%s,%s"%(self.tcp.gps_x, self.tcp.gps_y))
-        self.label_battery_info.setText("%d,%d,%d" %(self.tcp.battery1/4095*4.2, self.tcp.battery2/4095*4.2, self.tcp.battery3/4095*4.2))
+        self.label_coords_info.setText(
+            "%s,%s" % (self.tcp.gps_x, self.tcp.gps_y))
+        self.label_battery_info.setText("%d,%d,%d" % (
+            self.tcp.battery1/4095*4.2, self.tcp.battery2/4095*4.2, self.tcp.battery3/4095*4.2))
         if self.tcp.ct >= 2:
             self.label_storage_info.setText("full")
         else:
@@ -83,7 +96,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_speed_info.setText(self.tcp.speed)
         self.label_1left_motor_info.setText(str(self.tcp.lspeed))
         self.label_right_motor_info.setText(str(self.tcp.rspeed))
-
 
     def setSpeed(self):
         val = self.tcp.speedl - 6
@@ -117,7 +129,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.tcp.lspeed = self.tcp.speedl
             self.tcp.rspeed = self.tcp.speedl
-        print(self.tcp.lspeed, " ",self.tcp.rspeed)
+        print(self.tcp.lspeed, " ", self.tcp.rspeed)
 
     def goUp(self):
         if self.tcp.speedl == 12:
@@ -138,21 +150,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setSpeed()
 
     def goLeft(self):
-        if self.tcp.speedl == 0 or self.tcp.rspeed > self.tcp.lspeed :
+        if self.tcp.speedl == 0 or self.tcp.rspeed > self.tcp.lspeed:
             return
         self.leftClicked = True
         self.rightClicked = False
         self.setSpeed()
 
     def goRight(self):
-        if self.tcp.speedl == 0 or self.tcp.rspeed < self.tcp.lspeed :
+        if self.tcp.speedl == 0 or self.tcp.rspeed < self.tcp.lspeed:
             return
         self.rightClicked = True
         self.leftClicked = False
         self.setSpeed()
 
     def goStraight(self):
-        if self.tcp.speedl == 0 or self.tcp.rspeed == self.tcp.lspeed :
+        if self.tcp.speedl == 0 or self.tcp.rspeed == self.tcp.lspeed:
             return
         self.rightClicked = False
         self.leftClicked = False
@@ -168,23 +180,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tcp.belt = 1 - self.tcp.belt
 
     def clearMarkers(self):
-        self.map.page().runJavaScript("clearMarkers()");
-        
-    def saveFileDialog(self):
-        fileName, _ = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","All Files (*);;Text Files (*.txt)")
-        if fileName:
-            open(fileName, 'w').writelines("\n".join(["%s, %s"%(lat,lng) for lat,lng in self.map.markers]))
-            logging.info("MainWindow: Coords saved to %s"%(fileName))
+        self.map.page().runJavaScript("clearMarkers()")
 
-    def openFileNameDialog(self):    
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Text Files (*.txt)")
+    def saveFileDialog(self):
+        fileName, _ = QFileDialog.getSaveFileName(
+            self, "QFileDialog.getSaveFileName()", "", "All Files (*);;Text Files (*.txt)")
+        if fileName:
+            open(fileName, 'w').writelines(
+                "\n".join(["%s, %s" % (lat, lng) for lat, lng in self.map.markers]))
+            logging.info("MainWindow: Coords saved to %s" % (fileName))
+
+    def openFileNameDialog(self):
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "QFileDialog.getOpenFileName()", "", "All Files (*);;Text Files (*.txt)")
         if fileName:
             self.clearMarkers()
             lines = [line.split(',') for line in open(fileName)]
             lines = [(line[0].strip(), line[1].strip()) for line in lines]
             for lat, lng in lines:
-                self.map.page().runJavaScript("addMarkerLatlng(%s, %s)" %(lat,lng));
-            logging.info("MainWindow: Coords loaded from %s"%(fileName))
-
-
-        
+                self.map.page().runJavaScript("addMarkerLatlng(%s, %s)" % (lat, lng))
+            logging.info("MainWindow: Coords loaded from %s" % (fileName))

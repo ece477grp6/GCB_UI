@@ -4,18 +4,19 @@ import socket
 import time
 import math
 
+
 class TCPThread(QThread):
     msgGiven = pyqtSignal()
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QThread.__init__(self)
         self.rspeed = 0
         self.lspeed = 0
         self.speedl = 0
         self.belt = 1
-        self.inr=0.00001
+        self.inr = 0.00001
         self.mode = 0
-        self.markers =[]
+        self.markers = []
         self.curr_marker = 0
         self.gps_x = 0
         self.gps_y = 0
@@ -31,7 +32,7 @@ class TCPThread(QThread):
             msg = self.format_msg()
             # rcv_data = "4026.87226,N,08652.02631,E,0.134,23,-72"
             # rcv_data = "0000.00000,N,00000.00000,E,0.000,23,-72"
-            # print(rcv_data)
+            # print(rc v_data)
             # self.process_data(rcv_data)
             # time.sleep(1)
             try:
@@ -96,20 +97,20 @@ class TCPThread(QThread):
                     self.rspeed = 7
                     return "0807"+str(self.belt)
 
-
-    
     def process_data(self, rcv_data):
         data = rcv_data.split(",")
         print(data)
         self.prev_x = self.gps_x
         self.prev_y = self.gps_y
-        self.gps_x = int(float(data[0])/100)+(float(data[0])%100)/60
-        if data[1] is "S": self.gps_x = -self.gps_x
-        self.gps_y = int(float(data[2])/100)+(float(data[2])%100)/60
-        if data[3] is "E": self.gps_y = -self.gps_y
+        self.gps_x = int(float(data[0])/100)+(float(data[0]) % 100)/60
+        if data[1] is "S":
+            self.gps_x = -self.gps_x
+        self.gps_y = int(float(data[2])/100)+(float(data[2]) % 100)/60
+        if data[3] is "E":
+            self.gps_y = -self.gps_y
         self.speed = data[4]
         self.angle = math.atan(int(data[5])/int(data[6]))/math.pi*180
-        print("angle = ",self.angle)
+        print("angle = ", self.angle)
         if self.adc_init == []:
             for x in range(7, 12):
                 self.adc_init.append(int(data[x]))
@@ -140,7 +141,7 @@ class TCPThread(QThread):
         #     self.belt = 0
 
         # for testing
-        self.inr+=0.00001
+        self.inr += 0.00001
         self.gps_x = self.gps_x + self.inr
         self.gps_y = self.gps_y + self.inr
 
